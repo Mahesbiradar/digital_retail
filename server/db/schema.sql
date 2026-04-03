@@ -56,6 +56,14 @@ EXCEPTION
 END
 $$;
 
+DO $$
+BEGIN
+    CREATE TYPE unit_type_enum AS ENUM ('weight', 'piece', 'volume');
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END
+$$;
+
 CREATE OR REPLACE FUNCTION set_updated_at()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -122,9 +130,9 @@ CREATE TABLE IF NOT EXISTS catalog (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     brand VARCHAR(120),
     name VARCHAR(160) NOT NULL,
-    barcode VARCHAR(50) NOT NULL,
+    barcode VARCHAR(50) UNIQUE,
     category VARCHAR(80),
-    unit_type VARCHAR(20),
+    unit_type unit_type_enum,
     unit_value NUMERIC(10, 2),
     mrp NUMERIC(12, 2),
     gst_rate NUMERIC(5, 2),
@@ -142,7 +150,7 @@ CREATE TABLE IF NOT EXISTS products (
     name VARCHAR(160) NOT NULL,
     brand VARCHAR(120),
     sku VARCHAR(60),
-    unit_type VARCHAR(20),
+    unit_type unit_type_enum,
     unit_value NUMERIC(10, 2),
     description TEXT,
     mrp NUMERIC(12, 2),
@@ -250,9 +258,6 @@ SELECT
     SUM(available_quantity) AS total_stock
 FROM inventory_batches
 GROUP BY product_id, store_id;
-
-CREATE UNIQUE INDEX IF NOT EXISTS idx_catalog_barcode_unique
-    ON catalog (barcode);
 
 CREATE INDEX IF NOT EXISTS idx_stores_business_id
     ON stores (business_id);

@@ -9,15 +9,15 @@
 
 ---
 
-## Phase 1 — Foundation
+## Phase 1 - Foundation
 
 | # | Task | Status | Notes |
 |---|------|--------|-------|
-| 1 | Project scaffold (client + server + docker) | TODO | |
-| 2 | schema.sql + seed_catalog.sql | TODO | |
-| 3 | migrate.js + DB connects cleanly | TODO | |
+| 1 | Project scaffold (client + server + docker) | DONE | React 18 + Vite + Tailwind scaffolded, Express server scaffolded, Docker Compose added, npm deps installed, client build passes |
+| 2 | schema.sql + seed_catalog.sql | DONE | Schema approved with unit enum + product_stock view; seed contains 30 Kirana products with uncertain barcodes flagged in SQL comments |
+| 3 | migrate.js + DB connects cleanly | DONE | docker compose services are healthy, node server/db/migrate.js succeeded, and catalog seed count verified at 30 |
 
-## Phase 2 — Auth
+## Phase 2 - Auth
 
 | # | Task | Status | Notes |
 |---|------|--------|-------|
@@ -30,7 +30,7 @@
 | 10 | Login + Signup pages | TODO | |
 | 11 | ProtectedRoute component | TODO | |
 
-## Phase 3 — Store management
+## Phase 3 - Store management
 
 | # | Task | Status | Notes |
 |---|------|--------|-------|
@@ -39,7 +39,7 @@
 | 14 | Store settings page (GST/discount toggle) | TODO | |
 | 15 | Employee invite + list | TODO | |
 
-## Phase 4 — Inventory
+## Phase 4 - Inventory
 
 | # | Task | Status | Notes |
 |---|------|--------|-------|
@@ -54,7 +54,7 @@
 | 24 | Add batch page | TODO | |
 | 25 | Expiry alerts page | TODO | |
 
-## Phase 5 — POS billing
+## Phase 5 - POS billing
 
 | # | Task | Status | Notes |
 |---|------|--------|-------|
@@ -66,7 +66,7 @@
 | 31 | POS screen UI | TODO | |
 | 32 | Receipt display | TODO | |
 
-## Phase 6 — Kiosk (self-checkout)
+## Phase 6 - Kiosk (self-checkout)
 
 | # | Task | Status | Notes |
 |---|------|--------|-------|
@@ -77,7 +77,7 @@
 | 37 | Kiosk confirm + socket emit | TODO | |
 | 38 | Kiosk UI (mobile-first) | TODO | |
 
-## Phase 7 — Dashboard + Reports
+## Phase 7 - Dashboard + Reports
 
 | # | Task | Status | Notes |
 |---|------|--------|-------|
