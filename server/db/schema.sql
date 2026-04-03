@@ -124,7 +124,8 @@ CREATE TABLE IF NOT EXISTS catalog (
     name VARCHAR(160) NOT NULL,
     barcode VARCHAR(50) NOT NULL,
     category VARCHAR(80),
-    unit_label VARCHAR(50),
+    unit_type VARCHAR(20),
+    unit_value NUMERIC(10, 2),
     mrp NUMERIC(12, 2),
     gst_rate NUMERIC(5, 2),
     image_url TEXT,
@@ -140,9 +141,9 @@ CREATE TABLE IF NOT EXISTS products (
     created_by UUID REFERENCES users(id) ON DELETE SET NULL,
     name VARCHAR(160) NOT NULL,
     brand VARCHAR(120),
-    barcode VARCHAR(50),
     sku VARCHAR(60),
-    unit_label VARCHAR(50),
+    unit_type VARCHAR(20),
+    unit_value NUMERIC(10, 2),
     description TEXT,
     mrp NUMERIC(12, 2),
     selling_price NUMERIC(12, 2) NOT NULL CHECK (selling_price >= 0),
@@ -201,7 +202,6 @@ CREATE TABLE IF NOT EXISTS transaction_items (
     product_id UUID NOT NULL REFERENCES products(id) ON DELETE RESTRICT,
     batch_id UUID NOT NULL REFERENCES inventory_batches(id) ON DELETE RESTRICT,
     product_name_snapshot VARCHAR(160) NOT NULL,
-    barcode_snapshot VARCHAR(50),
     quantity INTEGER NOT NULL CHECK (quantity > 0),
     unit_price NUMERIC(12, 2) NOT NULL CHECK (unit_price >= 0),
     line_discount_amount NUMERIC(12, 2) NOT NULL DEFAULT 0 CHECK (line_discount_amount >= 0),
@@ -243,6 +243,14 @@ CREATE TABLE IF NOT EXISTS expiry_alerts (
     CHECK (expiry_status IN ('expiring_soon', 'expired'))
 );
 
+CREATE OR REPLACE VIEW product_stock AS
+SELECT
+    product_id,
+    store_id,
+    SUM(available_quantity) AS total_stock
+FROM inventory_batches
+GROUP BY product_id, store_id;
+
 CREATE UNIQUE INDEX IF NOT EXISTS idx_catalog_barcode_unique
     ON catalog (barcode);
 
@@ -269,13 +277,6 @@ CREATE INDEX IF NOT EXISTS idx_products_business_id
 
 CREATE INDEX IF NOT EXISTS idx_products_store_id
     ON products (store_id);
-
-CREATE INDEX IF NOT EXISTS idx_products_barcode
-    ON products (barcode);
-
-CREATE UNIQUE INDEX IF NOT EXISTS idx_products_store_barcode_unique
-    ON products (store_id, barcode)
-    WHERE barcode IS NOT NULL;
 
 CREATE INDEX IF NOT EXISTS idx_inventory_batches_business_id
     ON inventory_batches (business_id);
