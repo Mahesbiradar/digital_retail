@@ -110,6 +110,12 @@ export default function StoreList() {
                   POS
                 </Link>
                 <Link
+                  className="rounded-2xl border border-brand-leaf/30 bg-brand-leaf/10 px-4 py-2 text-sm font-semibold text-brand-leaf"
+                  to={`/shop/${store.storeSlug}`}
+                >
+                  Shop
+                </Link>
+                <Link
                   className="rounded-2xl border border-brand-ink/15 px-4 py-2 text-sm font-semibold text-brand-ink"
                   to={`/stores/${store.id}/employees`}
                 >

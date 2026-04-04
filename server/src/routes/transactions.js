@@ -254,7 +254,7 @@ export const applyStockDeduction = async (client, allocationsByBatchId) => {
   }
 };
 
-const createPaymentOrder = async ({ amount, transactionNumber, businessName, storeName }) => {
+export const createPaymentOrder = async ({ amount, transactionNumber, businessName, storeName }) => {
   const razorpay = getRazorpayClient();
   const amountPaise = Math.round(amount * 100);
 

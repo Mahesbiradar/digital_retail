@@ -70,12 +70,12 @@
 
 | # | Task | Status | Notes |
 |---|------|--------|-------|
-| 33 | Anonymous session API | TODO | |
-| 34 | Kiosk product search + barcode API | TODO | |
-| 35 | Kiosk cart API (Redis session) | TODO | |
-| 36 | Kiosk checkout + Razorpay order | TODO | |
-| 37 | Kiosk confirm + socket emit | TODO | |
-| 38 | Kiosk UI (mobile-first) | TODO | |
+| 33 | Anonymous session API | DONE | Public kiosk sessions are stored in Redis and resumed via kiosk session ids |
+| 34 | Kiosk product search + barcode API | DONE | Public search and barcode lookup work against the store slug, with sellable stock filtering |
+| 35 | Kiosk cart API (Redis session) | DONE | Anonymous Redis-backed kiosk session now supports add/remove/cart retrieval |
+| 36 | Kiosk checkout + Razorpay order | DONE | Checkout creates a pending kiosk transaction and Razorpay/mock payment order from the cart |
+| 37 | Kiosk confirm + socket emit | DONE | Public confirm completes payment, deducts stock, clears session, and emits kiosk_transaction to business/store rooms |
+| 38 | Kiosk UI (mobile-first) | DONE | Mobile-first /shop/:storeSlug flow added with scan/search, cart, payment, and success screens |
 
 ## Phase 7 - Dashboard + Reports
 

@@ -5,7 +5,9 @@ import { auth } from './middleware/auth.js';
 import authRouter from './routes/auth.js';
 import businessRouter from './routes/business.js';
 import inventoryRouter from './routes/inventory.js';
+import kioskRouter from './routes/kiosk.js';
 import paymentsRouter from './routes/payments.js';
+import reportsRouter from './routes/reports.js';
 import transactionsRouter from './routes/transactions.js';
 import storeRouter from './routes/stores.js';
 
@@ -23,6 +25,8 @@ app.use('/api/business', businessRouter);
 app.use('/api/stores', storeRouter);
 app.use('/api/stores', inventoryRouter);
 app.use('/api/stores', transactionsRouter);
+app.use('/api/kiosk', kioskRouter);
+app.use('/api/reports', reportsRouter);
 app.use('/api/payments', paymentsRouter);
 
 app.get('/api/health', (_req, res) => {

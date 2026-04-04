@@ -12,6 +12,10 @@ import AddBatch from './pages/inventory/AddBatch.jsx';
 import AddProduct from './pages/inventory/AddProduct.jsx';
 import ExpiryAlerts from './pages/inventory/ExpiryAlerts.jsx';
 import ProductList from './pages/inventory/ProductList.jsx';
+import KioskCart from './pages/kiosk/KioskCart.jsx';
+import KioskHome from './pages/kiosk/KioskHome.jsx';
+import KioskPayment from './pages/kiosk/KioskPayment.jsx';
+import KioskSuccess from './pages/kiosk/KioskSuccess.jsx';
 import { useAuthStore } from './store/authStore.js';
 
 function HomeRedirect() {
@@ -50,6 +54,10 @@ export default function App() {
   return (
     <Routes>
       <Route path="/" element={<HomeRedirect />} />
+      <Route path="/shop/:storeSlug" element={<KioskHome />} />
+      <Route path="/shop/:storeSlug/cart" element={<KioskCart />} />
+      <Route path="/shop/:storeSlug/payment" element={<KioskPayment />} />
+      <Route path="/shop/:storeSlug/success" element={<KioskSuccess />} />
       <Route
         path="/login"
         element={
