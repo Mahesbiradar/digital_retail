@@ -25,6 +25,10 @@ export const env = {
   POSTGRES_USER: process.env.POSTGRES_USER ?? 'postgres',
   POSTGRES_PASSWORD: process.env.POSTGRES_PASSWORD ?? 'postgres',
   DATABASE_URL: process.env.DATABASE_URL ?? '',
-  REDIS_URL: process.env.REDIS_URL ?? 'redis://127.0.0.1:6379'
+  REDIS_URL: process.env.REDIS_URL ?? 'redis://127.0.0.1:6379',
+  JWT_ACCESS_SECRET: process.env.JWT_ACCESS_SECRET ?? 'dev-access-secret',
+  JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET ?? 'dev-refresh-secret',
+  JWT_ACCESS_EXPIRES_IN: process.env.JWT_ACCESS_EXPIRES_IN ?? '15m',
+  JWT_REFRESH_EXPIRES_IN: process.env.JWT_REFRESH_EXPIRES_IN ?? '7d',
+  BCRYPT_SALT_ROUNDS: parseNumber(process.env.BCRYPT_SALT_ROUNDS, 10)
 };
-

@@ -1,38 +1,66 @@
-const featureCards = [
-  'Owner dashboard with live kiosk order feed',
-  'Batch-based inventory with expiry tracking',
-  'POS billing flow with barcode and camera scan',
-  'Public self-checkout experience via permanent store QR'
-];
+import { Navigate, Route, Routes } from 'react-router-dom';
+import ProtectedRoute from './components/ProtectedRoute.jsx';
+import Login from './pages/auth/Login.jsx';
+import Signup from './pages/auth/Signup.jsx';
+import DashboardHome from './pages/dashboard/DashboardHome.jsx';
+import { useAuthStore } from './store/authStore.js';
+
+function HomeRedirect() {
+  const { accessToken, refreshToken, hasHydrated } = useAuthStore((state) => ({
+    accessToken: state.accessToken,
+    refreshToken: state.refreshToken,
+    hasHydrated: state.hasHydrated
+  }));
+
+  if (!hasHydrated) {
+    return null;
+  }
+
+  return <Navigate to={accessToken || refreshToken ? '/dashboard' : '/login'} replace />;
+}
+
+function GuestRoute({ children }) {
+  const { accessToken, refreshToken, hasHydrated } = useAuthStore((state) => ({
+    accessToken: state.accessToken,
+    refreshToken: state.refreshToken,
+    hasHydrated: state.hasHydrated
+  }));
+
+  if (!hasHydrated) {
+    return null;
+  }
+
+  if (accessToken || refreshToken) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  return children;
+}
 
 export default function App() {
   return (
-    <main className="min-h-screen px-6 py-10 sm:px-10">
-      <div className="mx-auto flex max-w-6xl flex-col gap-8">
-        <section className="rounded-[2rem] border border-white/70 bg-white/85 p-8 shadow-[0_30px_80px_rgba(22,33,62,0.12)] backdrop-blur">
-          <p className="text-sm font-semibold uppercase tracking-[0.3em] text-brand-leaf">
-            Digital Retail System
-          </p>
-          <h1 className="mt-4 max-w-3xl text-4xl font-black tracking-tight text-brand-ink sm:text-5xl">
-            Kirana-first POS, inventory, and self-checkout in one workflow.
-          </h1>
-          <p className="mt-4 max-w-2xl text-lg leading-8 text-slate-700">
-            Task 1 scaffold is ready with React, Vite, Tailwind, Express, PostgreSQL,
-            Redis, and the initial database schema for the Digital Retail platform.
-          </p>
-        </section>
-
-        <section className="grid gap-4 md:grid-cols-2">
-          {featureCards.map((feature) => (
-            <article
-              key={feature}
-              className="rounded-[1.5rem] border border-brand-ink/10 bg-white/80 p-6 shadow-[0_16px_40px_rgba(31,122,77,0.08)]"
-            >
-              <p className="text-base font-semibold text-brand-ink">{feature}</p>
-            </article>
-          ))}
-        </section>
-      </div>
-    </main>
+    <Routes>
+      <Route path="/" element={<HomeRedirect />} />
+      <Route
+        path="/login"
+        element={
+          <GuestRoute>
+            <Login />
+          </GuestRoute>
+        }
+      />
+      <Route
+        path="/signup"
+        element={
+          <GuestRoute>
+            <Signup />
+          </GuestRoute>
+        }
+      />
+      <Route element={<ProtectedRoute />}>
+        <Route path="/dashboard" element={<DashboardHome />} />
+      </Route>
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
   );
 }

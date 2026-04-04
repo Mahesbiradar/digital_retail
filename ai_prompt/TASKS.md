@@ -21,14 +21,14 @@
 
 | # | Task | Status | Notes |
 |---|------|--------|-------|
-| 4 | POST /api/auth/signup | TODO | |
-| 5 | POST /api/auth/login | TODO | |
-| 6 | POST /api/auth/refresh | TODO | |
-| 7 | JWT middleware + roleCheck | TODO | |
-| 8 | Axios instance + interceptors (client) | TODO | |
-| 9 | Zustand authStore | TODO | |
-| 10 | Login + Signup pages | TODO | |
-| 11 | ProtectedRoute component | TODO | |
+| 4 | POST /api/auth/signup | DONE | Creates business + owner in one transaction and returns access/refresh tokens with public user and business payloads |
+| 5 | POST /api/auth/login | DONE | Validates owner credentials, updates last_login_at, and returns fresh access/refresh tokens |
+| 6 | POST /api/auth/refresh | DONE | Verifies JWT refresh token against Redis key refreshToken:{userId} and issues a new access token |
+| 7 | JWT middleware + roleCheck | DONE | Added access-token auth middleware and reusable roleCheck middleware; protected test route verified |
+| 8 | Axios instance + interceptors (client) | DONE | Request interceptor attaches bearer token, 401 handler refreshes once and retries original request |
+| 9 | Zustand authStore | DONE | Persisted auth store added with login, signup, logout, clearAuth, and setTokens/session helpers |
+| 10 | Login + Signup pages | DONE | Tailwind auth pages added with form submission, inline errors, and dashboard redirect |
+| 11 | ProtectedRoute component | DONE | Protected dashboard route added with hydration guard and redirect when session is missing |
 
 ## Phase 3 - Store management
 

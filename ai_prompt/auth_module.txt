@@ -1,0 +1,106 @@
+You are a senior backend engineer.
+
+Implement the AUTH module for Smart Kirana OS using Express + PostgreSQL.
+
+---
+
+## CONTEXT:
+
+- Database schema is finalized
+- users table exists
+- role ENUM: owner, manager, cashier
+- password_hash column available
+
+---
+
+## STEP 1: SIGNUP API
+
+POST /api/auth/signup
+
+Input:
+- name
+- phone
+- password
+
+Logic:
+- hash password using bcrypt
+- create user with role = owner (default)
+- ensure phone is unique
+- return JWT access token + refresh token
+
+---
+
+## STEP 2: LOGIN API
+
+POST /api/auth/login
+
+Input:
+- phone
+- password
+
+Logic:
+- verify user exists
+- compare password
+- return JWT tokens
+
+---
+
+## STEP 3: REFRESH TOKEN
+
+POST /api/auth/refresh
+
+- verify refresh token
+- issue new access token
+
+---
+
+## STEP 4: JWT MIDDLEWARE
+
+- protect routes
+- attach user to request
+- validate token
+
+---
+
+## STEP 5: ROLE CHECK MIDDLEWARE
+
+- allow access based on:
+  owner / manager / cashier
+
+---
+
+## STEP 6: VALIDATION
+
+- handle invalid input
+- return proper errors (400, 401)
+
+---
+
+## STEP 7: TESTING
+
+Test:
+
+- signup works
+- login works
+- protected route works
+
+---
+
+## STEP 8: RUN VALIDATION AGENTS
+
+After implementation:
+
+- auto_dev_agent.txt
+- feature_validator.txt
+- system_test.txt
+
+Fix all issues
+
+---
+
+## OUTPUT:
+
+- files created
+- APIs working
+- test results
+- final status
