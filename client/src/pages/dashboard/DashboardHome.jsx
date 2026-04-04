@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { apiClient } from '../../api/axios.js';
 import { useAuthStore } from '../../store/authStore.js';
 
@@ -104,6 +105,15 @@ export default function DashboardHome() {
               </div>
             ) : null}
           </article>
+        </section>
+
+        <section className="flex flex-wrap gap-3">
+          <Link className="rounded-2xl bg-brand-leaf px-5 py-3 text-sm font-semibold text-white" to="/stores">
+            Manage stores
+          </Link>
+          <Link className="rounded-2xl border border-brand-ink/15 bg-white px-5 py-3 text-sm font-semibold text-brand-ink" to="/stores/new">
+            Create store
+          </Link>
         </section>
       </div>
     </main>

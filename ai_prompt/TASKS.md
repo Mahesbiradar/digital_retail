@@ -34,37 +34,37 @@
 
 | # | Task | Status | Notes |
 |---|------|--------|-------|
-| 12 | POST /api/stores (create + QR gen) | TODO | |
-| 13 | GET /api/stores (list) | TODO | |
-| 14 | Store settings page (GST/discount toggle) | TODO | |
-| 15 | Employee invite + list | TODO | |
+| 12 | POST /api/stores (create + QR gen) | DONE | Owner can create a store, receives a permanent QR code URL/data URL, and the slug is generated with a random 4-char suffix |
+| 13 | GET /api/stores (list) | DONE | Owner can list all stores for the current business |
+| 14 | Store settings page (GST/discount toggle) | DONE | Store details can be edited and business GST/discount flags can be updated from the UI |
+| 15 | Employee invite + list | DONE | Owner can invite employees by phone and role, list them, and remove them from a store |
 
 ## Phase 4 - Inventory
 
 | # | Task | Status | Notes |
 |---|------|--------|-------|
-| 16 | Catalog search + barcode lookup API | TODO | |
-| 17 | Add product to store API | TODO | |
-| 18 | Add stock batch API | TODO | |
-| 19 | FIFO batch deduction helper | TODO | |
-| 20 | Nightly expiry cron job | TODO | |
-| 21 | Expiry alerts API | TODO | |
-| 22 | Product list page | TODO | |
-| 23 | Add product page (scan + search) | TODO | |
-| 24 | Add batch page | TODO | |
-| 25 | Expiry alerts page | TODO | |
+| 16 | Catalog search + barcode lookup API | DONE | Search and barcode lookup endpoints work under /api/stores/:storeId; catalog search is limited and barcode lookup returns NOT_FOUND cleanly |
+| 17 | Add product to store API | DONE | Supports catalog-linked and manual products with unit enum validation |
+| 18 | Add stock batch API | DONE | Validates quantity, expiry rules, and persists FIFO-ready batches |
+| 19 | FIFO batch deduction helper | DONE | getAvailableBatch(productId, storeId) returns the oldest non-expired batch with stock |
+| 20 | Nightly expiry cron job | DONE | Cron updates batch expiry_status at midnight and inserts alerts once per day |
+| 21 | Expiry alerts API | DONE | Store-level alerts endpoint lists expiring and expired batches with product/batch context |
+| 22 | Product list page | DONE | Inventory list shows stock levels, status badges, and actions |
+| 23 | Add product page (scan + search) | DONE | Catalog search, barcode lookup, and camera scan modal all prefill the form |
+| 24 | Add batch page | DONE | Add batch form hides expiry input when the product does not track expiry |
+| 25 | Expiry alerts page | DONE | Alert list page shows batches needing attention and links back to inventory |
 
 ## Phase 5 - POS billing
 
 | # | Task | Status | Notes |
 |---|------|--------|-------|
-| 26 | posStore Zustand (cart logic) | TODO | |
-| 27 | Barcode scan (USB + camera) | TODO | |
-| 28 | POST /api/transactions (cash) | TODO | |
-| 29 | POST /api/transactions (UPI + Razorpay) | TODO | |
-| 30 | Razorpay webhook verify | TODO | |
-| 31 | POS screen UI | TODO | |
-| 32 | Receipt display | TODO | |
+| 26 | posStore Zustand (cart logic) | DONE | Cart state, totals, discount handling, and stock validation live in a dedicated Zustand store |
+| 27 | Barcode scan (USB + camera) | DONE | POS screen supports hidden USB barcode input and ZXing camera scan modal |
+| 28 | POST /api/transactions (cash) | DONE | Cash checkout revalidates stock, deducts FIFO batches, and marks the transaction complete immediately |
+| 29 | POST /api/transactions (UPI + Razorpay) | DONE | UPI checkout creates a Razorpay order in configured envs and a mock order locally, with QR rendering support |
+| 30 | Razorpay webhook verify | DONE | Payment verification endpoint marks the transaction complete and deducts inventory on success |
+| 31 | POS screen UI | DONE | Full-screen cashier interface is wired at /pos/:storeId with cart, scan, totals, and checkout actions |
+| 32 | Receipt display | DONE | Receipt view renders the completed sale and transaction detail after cash or UPI confirmation |
 
 ## Phase 6 - Kiosk (self-checkout)
 

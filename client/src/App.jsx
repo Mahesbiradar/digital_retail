@@ -3,6 +3,15 @@ import ProtectedRoute from './components/ProtectedRoute.jsx';
 import Login from './pages/auth/Login.jsx';
 import Signup from './pages/auth/Signup.jsx';
 import DashboardHome from './pages/dashboard/DashboardHome.jsx';
+import CreateStore from './pages/stores/CreateStore.jsx';
+import Employees from './pages/stores/Employees.jsx';
+import PosScreen from './pages/pos/PosScreen.jsx';
+import StoreList from './pages/stores/StoreList.jsx';
+import StoreSettings from './pages/stores/StoreSettings.jsx';
+import AddBatch from './pages/inventory/AddBatch.jsx';
+import AddProduct from './pages/inventory/AddProduct.jsx';
+import ExpiryAlerts from './pages/inventory/ExpiryAlerts.jsx';
+import ProductList from './pages/inventory/ProductList.jsx';
 import { useAuthStore } from './store/authStore.js';
 
 function HomeRedirect() {
@@ -59,6 +68,15 @@ export default function App() {
       />
       <Route element={<ProtectedRoute />}>
         <Route path="/dashboard" element={<DashboardHome />} />
+        <Route path="/stores" element={<StoreList />} />
+        <Route path="/stores/new" element={<CreateStore />} />
+        <Route path="/stores/:storeId" element={<StoreSettings />} />
+        <Route path="/stores/:storeId/employees" element={<Employees />} />
+        <Route path="/stores/:storeId/inventory" element={<ProductList />} />
+        <Route path="/stores/:storeId/products/new" element={<AddProduct />} />
+        <Route path="/stores/:storeId/products/:productId/batches" element={<AddBatch />} />
+        <Route path="/stores/:storeId/expiry-alerts" element={<ExpiryAlerts />} />
+        <Route path="/pos/:storeId" element={<PosScreen />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

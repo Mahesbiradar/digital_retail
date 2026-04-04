@@ -2,6 +2,7 @@ import { createServer } from 'node:http';
 import { Server as SocketIOServer } from 'socket.io';
 import { app } from './app.js';
 import { env } from './config/env.js';
+import { startExpiryCron } from './jobs/expiryCron.js';
 import { checkPostgresConnection } from './lib/postgres.js';
 import { connectRedis } from './lib/redis.js';
 
@@ -26,6 +27,7 @@ io.on('connection', (socket) => {
 const start = async () => {
   await checkPostgresConnection();
   await connectRedis();
+  startExpiryCron();
 
   httpServer.listen(env.PORT, () => {
     console.log(`Server running on ${env.BACKEND_URL}`);
@@ -36,4 +38,3 @@ start().catch((error) => {
   console.error('Failed to start server:', error);
   process.exit(1);
 });
-

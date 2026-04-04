@@ -2,51 +2,43 @@
 Last updated: 2026-04-04
 
 ## Last completed task
-Task #: 2 - Auth module
-What was done: Task 2 is complete. The server now has signup, login, refresh, logout, access-token auth middleware, roleCheck middleware, and protected auth test endpoints backed by PostgreSQL and Redis. The client now has an auth store, Axios refresh handling, login/signup pages, protected routing, and a dashboard page that confirms access to a secured endpoint.
+Task #: 32 - Receipt display
+What was done: The POS billing module is complete. The server now supports POS checkout transactions for cash and UPI, Razorpay order creation with local mock fallback, payment verification, and receipt fetches. The client now has a dedicated /pos/:storeId cashier screen with barcode scan, product search, cart management, cash checkout, UPI QR display, mock payment confirmation, and receipt rendering.
 
 ## Current state
-- Server: not started - auth routes and middleware are implemented and syntax-checked, but the app was not left running
-- Client: not started - auth routes/pages are implemented and npm run build passes
+- Server: not started - auth, store, inventory, and POS routes are implemented and syntax-checked, but the app was not left running
+- Client: not started - auth, store, inventory, and POS pages are implemented and npm run build passes
 - Database: migrated - Postgres and Redis are running via Docker, schema applied successfully, and seed data loaded successfully
-- Last passing test: an in-process server test successfully completed signup, login, GET /api/auth/me, GET /api/test/protected, refresh, logout, and verified that refresh fails after logout; client npm run build also passed
+- Last passing test: an in-process server test successfully completed signup, store create/summary, catalog search, barcode lookup, product create, batch create, cash POS checkout, UPI POS checkout, mock Razorpay verification, receipt fetches, and stock deductions; client npm run build also passed
 
 ## Next task to run
-Task #: 3
-Prompt to use: Build store and employee management. Auth middleware applies to all routes.
+Task #: 33
+Prompt to use: Build the public self-checkout experience at /shop/:store_slug. No auth. Mobile-first. Works entirely in the customer's phone browser.
 
 Backend endpoints:
-POST   /api/stores              (owner only) create store, auto-generate
-                                 store_slug from name, generate QR code URL
-GET    /api/stores              (owner) list all stores for their business
-GET    /api/stores/:storeId     store detail
-PATCH  /api/stores/:storeId     update store settings (gst, discount toggles
-                                 live on business level - update /api/business)
-POST   /api/stores/:storeId/employees    invite employee by phone + role
-GET    /api/stores/:storeId/employees    list employees
-DELETE /api/stores/:storeId/employees/:userId   remove employee
+POST /api/kiosk/:storeSlug/session
+GET  /api/kiosk/:storeSlug/search?q=...
+GET  /api/kiosk/:storeSlug/barcode/:code
+POST /api/kiosk/:storeSlug/cart/add
+POST /api/kiosk/:storeSlug/cart/remove
+GET  /api/kiosk/:storeSlug/cart
+POST /api/kiosk/:storeSlug/checkout
+POST /api/kiosk/:storeSlug/confirm
 
-Store slug: auto-generated as kebab-case of store name + 4 random chars.
-Example: "Ram General Store" -> "ram-general-store-k7x2"
+Frontend:
+- /src/pages/kiosk/KioskHome.jsx
+- /src/pages/kiosk/KioskCart.jsx
+- /src/pages/kiosk/KioskPayment.jsx
+- /src/pages/kiosk/KioskSuccess.jsx
 
-QR code: use the qrcode npm package to generate a PNG data URL for
-https://[FRONTEND_URL]/shop/[store_slug] and save to Cloudinary.
-
-Frontend pages:
-- /src/pages/stores/StoreList.jsx  - cards showing each store
-- /src/pages/stores/CreateStore.jsx - form
-- /src/pages/stores/StoreSettings.jsx - edit store, toggle GST/discount,
-  show QR code with a download button
-- /src/pages/stores/Employees.jsx - list + invite form
-
-Acceptance: Owner can create a store, see its QR code, download it,
-invite an employee by phone number with a role.
+Acceptance: Open /shop/test-store on mobile browser, scan a product, add to cart, complete Razorpay UPI payment, owner dashboard shows the order within 2 seconds via socket.
 
 ## Known issues / blockers
 - Server dependency install reports 2 high severity vulnerabilities in npm audit; not addressed in Task 1
 - Several seed barcodes are intentionally marked for later physical-packaging verification
 - Docker commands from this environment require elevated access to reach the local Docker daemon
 - ai_prompt/auth_module.txt is present but empty; Task 2 was implemented from AGENTS.md and ai_prompt/TASKS.md
+- Store QR generation falls back to a local data URL when Cloudinary credentials are not available in the dev environment
 
 ## Environment variables needed before next task
 - POSTGRES_HOST, POSTGRES_PORT, POSTGRES_DB, POSTGRES_USER, POSTGRES_PASSWORD or DATABASE_URL
@@ -62,37 +54,20 @@ invite an employee by phone number with a role.
 - CLOUDINARY_API_SECRET
 
 ## Files changed in last session
-- .gitignore
-- .env.example
-- docker-compose.yml
-- client/package.json
-- client/vite.config.js
-- client/tailwind.config.js
-- client/postcss.config.js
-- client/index.html
-- client/src/App.jsx
-- client/src/index.css
-- client/src/main.jsx
-- server/package.json
-- server/db/schema.sql
-- server/db/seed_catalog.sql
-- server/db/migrate.js
 - server/src/app.js
 - server/src/index.js
-- server/src/config/env.js
-- server/src/lib/jwt.js
-- server/src/lib/postgres.js
-- server/src/lib/redis.js
-- server/src/middleware/auth.js
-- server/src/middleware/roleCheck.js
-- server/src/routes/auth.js
-- server/src/utils/phone.js
-- server/src/utils/serialize.js
-- server/src/utils/time.js
-- client/src/api/axios.js
-- client/src/store/authStore.js
-- client/src/components/ProtectedRoute.jsx
-- client/src/pages/auth/Login.jsx
-- client/src/pages/auth/Signup.jsx
-- client/src/pages/dashboard/DashboardHome.jsx
-- .env
+- server/src/jobs/expiryCron.js
+- server/src/lib/razorpay.js
+- server/src/routes/inventory.js
+- server/src/routes/payments.js
+- server/src/routes/transactions.js
+- server/src/utils/inventory.js
+- client/src/App.jsx
+- client/src/pages/inventory/AddBatch.jsx
+- client/src/pages/inventory/AddProduct.jsx
+- client/src/pages/inventory/ExpiryAlerts.jsx
+- client/src/pages/inventory/ProductList.jsx
+- client/src/pages/pos/PosScreen.jsx
+- client/src/pages/stores/StoreList.jsx
+- client/src/pages/stores/StoreSettings.jsx
+- client/src/store/posStore.js

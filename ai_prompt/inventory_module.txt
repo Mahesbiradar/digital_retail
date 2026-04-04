@@ -1,0 +1,122 @@
+You are a senior backend engineer.
+
+Implement the INVENTORY + CATALOG module for Smart Kirana OS using Express + PostgreSQL.
+
+---
+
+## CONTEXT:
+
+- Auth system is complete
+- Database schema is finalized (catalog, products, inventory_batches)
+- Barcode exists ONLY in catalog
+- Inventory is batch-based (FIFO + expiry)
+
+---
+
+## STEP 1: CATALOG SEARCH API
+
+GET /api/catalog/search?q=
+
+Features:
+- search by name (ILIKE)
+- search by barcode (exact match)
+- limit results (10–20)
+- fast response
+
+---
+
+## STEP 2: BARCODE LOOKUP
+
+GET /api/catalog/barcode/:code
+
+Logic:
+- find product in catalog by barcode
+- if found → return product
+- if not → return "NOT_FOUND"
+
+---
+
+## STEP 3: ADD PRODUCT TO STORE
+
+POST /api/products
+
+Input:
+- catalog_id (optional)
+- name (if manual)
+- selling_price
+- unit_type
+- unit_value
+
+Logic:
+- if catalog_id → link product
+- else → create custom product
+
+---
+
+## STEP 4: ADD STOCK (BATCH)
+
+POST /api/inventory/batch
+
+Input:
+- product_id
+- quantity
+- purchase_price
+- expiry_date (optional)
+- batch_number
+
+Logic:
+- create inventory_batches row
+- validate:
+  - quantity > 0
+  - expiry_date if track_expiry = true
+
+---
+
+## STEP 5: FIFO HELPER (VERY IMPORTANT)
+
+Create helper:
+
+getAvailableStock(product_id, store_id)
+
+Logic:
+- fetch batches ordered by:
+  expiry_date ASC, created_at ASC
+- only where available_quantity > 0
+
+---
+
+## STEP 6: VALIDATION
+
+- prevent negative stock
+- validate product exists
+- validate store ownership
+
+---
+
+## STEP 7: TEST FLOW
+
+Test:
+
+1. search catalog
+2. add product
+3. add stock batch
+4. fetch stock
+
+---
+
+## STEP 8: RUN AGENTS
+
+- auto_dev_agent.txt
+- feature_validator.txt
+- system_test.txt
+
+Fix all issues
+
+---
+
+## OUTPUT:
+
+- APIs created
+- test results
+- bugs fixed
+- final status
