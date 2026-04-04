@@ -4,11 +4,10 @@ import { pool } from '../lib/postgres.js';
 import { redisClient } from '../lib/redis.js';
 import { buildRazorpaySignature, getRazorpayClient, verifyRazorpaySignature } from '../lib/razorpay.js';
 import { applyStockDeduction, buildReceiptPayload, createPaymentOrder } from './transactions.js';
-import { buildProductRow } from '../utils/inventory.js';
 
 const router = express.Router();
 
-const kioskSessionTtlSeconds = 60 * 60 * 24;
+const kioskSessionTtlSeconds = 60 * 30;
 
 const kioskSessionKey = (sessionId) => `kioskSession:${sessionId}`;
 
@@ -103,6 +102,27 @@ const saveCartSession = async (session) => {
 
   return updatedSession;
 };
+
+const sanitizePublicKioskProduct = (row) => ({
+  id: row.id,
+  name: row.name,
+  brand: row.brand,
+  sellingPrice: row.sellingPrice,
+  imageUrl: row.imageUrl ?? null
+});
+
+const sanitizePublicCatalogProduct = (row) => ({
+  id: row.id,
+  brand: row.brand,
+  name: row.name,
+  barcode: row.barcode,
+  category: row.category,
+  unitType: row.unitType,
+  unitValue: row.unitValue,
+  mrp: row.mrp,
+  gstRate: row.gstRate,
+  imageUrl: row.imageUrl ?? null
+});
 
 const loadProductForKiosk = async (storeId, businessId, productId) => {
   const { rows } = await pool.query(
@@ -255,7 +275,7 @@ const searchProducts = async (storeId, businessId, q) => {
     [storeId, businessId, `%${q}%`]
   );
 
-  return rows.map((row) => buildProductRow(row));
+  return rows.map((row) => sanitizePublicKioskProduct(row));
 };
 
 const loadBatchRows = async (client, productId, storeId) => {
@@ -349,12 +369,19 @@ const buildCartTotals = (cart, business) => {
 const getCartResponse = (session, store, business) => {
   const cart = Array.isArray(session?.cart) ? session.cart : [];
   const totals = buildCartTotals(cart, business);
+  const publicCart = cart.map((item) => ({
+    productId: item.productId,
+    name: item.name,
+    brand: item.brand ?? null,
+    quantity: Number(item.quantity ?? 0),
+    unitPrice: Number(item.unitPrice ?? 0)
+  }));
 
   return {
     sessionId: session?.sessionId ?? null,
     store,
     business,
-    cart,
+    cart: publicCart,
     totals
   };
 };
@@ -436,8 +463,8 @@ router.get('/:storeSlug/barcode/:code', async (req, res) => {
     }
 
     return res.json({
-      catalog: match.catalog,
-      product: match.product
+      catalog: sanitizePublicCatalogProduct(match.catalog),
+      product: sanitizePublicKioskProduct(match.product)
     });
   } catch (error) {
     return res.status(error.statusCode ?? 500).json({
@@ -514,24 +541,17 @@ router.post('/:storeSlug/cart/add', async (req, res) => {
     if (existingItem) {
       existingItem.quantity = nextQuantity;
     } else {
-      cart.push({
-        productId: product.id,
-        name: product.name,
-        brand: product.brand,
-        sku: product.sku,
-        catalogId: product.catalogId,
-        unitType: product.unitType,
-        unitValue: product.unitValue,
-        mrp: product.mrp,
-        unitPrice: Number(product.sellingPrice ?? 0),
-        gstRate: Number(product.gstRate ?? 0),
-        trackExpiry: Boolean(product.trackExpiry),
-        quantity,
-        imageUrl: product.imageUrl ?? null,
-        totalStock: Number(product.totalStock ?? 0),
-        sellableStock: Number(product.sellableStock ?? 0)
-      });
-    }
+        cart.push({
+          productId: product.id,
+          name: product.name,
+          brand: product.brand,
+          sku: product.sku,
+          catalogId: product.catalogId,
+          unitPrice: Number(product.sellingPrice ?? 0),
+          quantity,
+          imageUrl: product.imageUrl ?? null
+        });
+      }
 
     const savedSession = await saveCartSession({
       ...session,
@@ -636,7 +656,7 @@ router.post('/:storeSlug/checkout', async (req, res) => {
     for (const item of cart) {
       const product = await loadProductForKiosk(store.id, store.businessId, item.productId);
       const quantity = Math.max(1, Math.floor(Number(item.quantity ?? 0)));
-      const unitPrice = toNumber(item.unitPrice, Number(product?.sellingPrice ?? 0));
+      const unitPrice = Number(product?.sellingPrice ?? 0);
 
       if (!product || !product.isActive || quantity <= 0 || Number(product.sellableStock ?? 0) <= 0) {
         const error = new Error('This item is currently unavailable.');
@@ -1013,14 +1033,6 @@ router.post('/:storeSlug/confirm', async (req, res) => {
     const io = req.app.get('io');
     if (io) {
       io.to(`store:${transaction.storeId}`).emit('kiosk_transaction', {
-        event: 'kiosk_transaction',
-        storeName: store.name,
-        businessName: business.name,
-        transaction: receipt.transaction,
-        payment: receipt.payment,
-        items: receipt.items
-      });
-      io.to(`business:${store.businessId}`).emit('kiosk_transaction', {
         event: 'kiosk_transaction',
         storeName: store.name,
         businessName: business.name,

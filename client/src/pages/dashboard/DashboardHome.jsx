@@ -22,12 +22,10 @@ const summaryCardConfig = [
 ];
 
 export default function DashboardHome() {
-  const { user, business, logout, accessToken } = useAuthStore((state) => ({
-    user: state.user,
-    business: state.business,
-    logout: state.logout,
-    accessToken: state.accessToken
-  }));
+  const user = useAuthStore((state) => state.user);
+  const business = useAuthStore((state) => state.business);
+  const logout = useAuthStore((state) => state.logout);
+  const accessToken = useAuthStore((state) => state.accessToken);
   const [profile, setProfile] = useState(null);
   const [status, setStatus] = useState('loading');
   const [errorMessage, setErrorMessage] = useState('');
@@ -154,7 +152,7 @@ export default function DashboardHome() {
           completedAt: payload.transaction?.completedAt ?? new Date().toISOString()
         },
         ...current
-      ].slice(0, 5));
+      ].slice(0, 10));
     });
 
     return () => {

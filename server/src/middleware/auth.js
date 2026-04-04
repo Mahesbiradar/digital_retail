@@ -5,7 +5,9 @@ export const auth = (req, res, next) => {
 
   if (!authorization.startsWith('Bearer ')) {
     return res.status(401).json({
-      message: 'Authentication required.'
+      success: false,
+      message: 'Authentication required.',
+      code: 401
     });
   }
 
@@ -16,7 +18,9 @@ export const auth = (req, res, next) => {
     return next();
   } catch (_error) {
     return res.status(401).json({
-      message: 'Invalid or expired access token.'
+      success: false,
+      message: 'Invalid or expired access token.',
+      code: 401
     });
   }
 };

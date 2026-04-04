@@ -289,8 +289,14 @@ export const createPaymentOrder = async ({ amount, transactionNumber, businessNa
         )
       };
     } catch (error) {
-      console.warn('Razorpay order creation failed, falling back to a mock order:', error.message);
+      if (env.NODE_ENV === 'production') {
+        throw error;
+      }
     }
+  }
+
+  if (env.NODE_ENV === 'production') {
+    throw new Error('Razorpay is required in production.');
   }
 
   const mockOrderId = `order_mock_${crypto.randomBytes(6).toString('hex')}`;
@@ -363,9 +369,8 @@ router.post('/:storeId/transactions', auth, billingAccess, async (req, res) => {
     for (const rawItem of items) {
       const productId = String(rawItem.productId ?? '').trim();
       const quantity = Number(rawItem.quantity);
-      const unitPrice = toNumber(rawItem.unitPrice, 0);
 
-      if (!productId || !Number.isInteger(quantity) || quantity <= 0 || unitPrice < 0) {
+      if (!productId || !Number.isInteger(quantity) || quantity <= 0) {
         const error = new Error('Invalid transaction item.');
         error.statusCode = 400;
         throw error;
@@ -377,6 +382,8 @@ router.post('/:storeId/transactions', auth, billingAccess, async (req, res) => {
         error.statusCode = 400;
         throw error;
       }
+
+      const unitPrice = Number(product.sellingPrice ?? 0);
 
       const batchRows = await loadBatchRowSet(client, productId, req.params.storeId);
       const allocations = allocateQuantityFromBatches(batchRows, quantity);

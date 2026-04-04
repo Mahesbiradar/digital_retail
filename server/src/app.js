@@ -20,6 +20,50 @@ app.use(
   })
 );
 app.use(express.json());
+
+const errorMessageByStatus = (statusCode, fallbackMessage) => {
+  if (fallbackMessage) {
+    return fallbackMessage;
+  }
+
+  switch (statusCode) {
+    case 400:
+      return 'Bad request.';
+    case 401:
+      return 'Authentication required.';
+    case 403:
+      return 'Forbidden.';
+    case 404:
+      return 'Not found.';
+    default:
+      return 'Request failed.';
+  }
+};
+
+app.use((req, res, next) => {
+  const originalJson = res.json.bind(res);
+
+  res.json = (body) => {
+    const statusCode = res.statusCode ?? 200;
+    if (statusCode >= 400 && body && typeof body === 'object' && !Array.isArray(body)) {
+      if ('success' in body) {
+        return originalJson(body);
+      }
+
+      const message = errorMessageByStatus(statusCode, typeof body.message === 'string' ? body.message : undefined);
+      return originalJson({
+        success: false,
+        message,
+        code: statusCode
+      });
+    }
+
+    return originalJson(body);
+  };
+
+  next();
+});
+
 app.use('/api/auth', authRouter);
 app.use('/api/business', businessRouter);
 app.use('/api/stores', storeRouter);
@@ -48,6 +92,8 @@ app.use((err, _req, res, _next) => {
   console.error(err);
 
   res.status(err.statusCode ?? 500).json({
-    message: err.message ?? 'Internal server error.'
+    success: false,
+    message: err.message ?? 'Internal server error.',
+    code: err.code ?? err.statusCode ?? 500
   });
 });

@@ -1,0 +1,201 @@
+You are a senior backend engineer and production readiness auditor.
+
+Your task is to HARDEN the Smart Kirana OS system for real-world usage before demo and deployment.
+
+---
+
+## CONTEXT:
+
+The system is fully built:
+- Auth (JWT + Redis refresh)
+- Inventory (batch + FIFO + expiry)
+- POS billing
+- Kiosk (self-checkout)
+- Reports + dashboard
+
+Now ensure system is SAFE, CONSISTENT, and PRODUCTION-READY.
+
+---
+
+# STEP 1: TRANSACTION SAFETY (CRITICAL)
+
+For ALL stock deduction flows:
+- POS billing
+- Kiosk confirm
+
+Ensure:
+
+1. Use DB transaction
+2. Use row-level locking:
+
+SQL:
+SELECT ... FOR UPDATE
+
+3. Deduct stock atomically
+4. Prevent negative stock
+
+---
+
+# STEP 2: EXPIRED STOCK BLOCK
+
+Ensure everywhere:
+
+- FIFO helper excludes expired batches
+- POS cannot sell expired items
+- Kiosk cannot sell expired items
+
+Condition:
+expiry_status != 'expired'
+
+---
+
+# STEP 3: PRICE SECURITY
+
+Ensure:
+
+- Price is ALWAYS fetched from DB
+- Ignore any price from frontend
+- Validate selling_price from product table
+
+---
+
+# STEP 4: STOCK VALIDATION
+
+Before deduction:
+
+- Check available_quantity >= requested_quantity
+- Reject if insufficient stock
+- Return proper error (400)
+
+---
+
+# STEP 5: SESSION SECURITY (KIOSK)
+
+Ensure:
+
+- kiosk session has TTL (30 min)
+- session tied to store_id
+- cannot access another store session
+- session cleared after checkout
+
+---
+
+# STEP 6: SOCKET SECURITY
+
+Ensure:
+
+- socket rooms are isolated per store
+- format: store:{storeId}
+- no cross-store data leakage
+
+---
+
+# STEP 7: PAYMENT FLOW SAFETY
+
+Ensure:
+
+- payment verification happens BEFORE stock deduction
+- Razorpay verify endpoint validates signature
+- reject invalid payments
+
+---
+
+# STEP 8: REMOVE DEV FALLBACKS
+
+Disable or guard:
+
+- Razorpay mock mode
+- Cloudinary fallback
+- Any hardcoded dev flags
+
+Ensure:
+- only real config used in production
+
+---
+
+# STEP 9: ENVIRONMENT VALIDATION
+
+Ensure required env variables exist:
+
+- DATABASE_URL
+- REDIS_URL
+- JWT_ACCESS_SECRET
+- JWT_REFRESH_SECRET
+- RAZORPAY_KEY_ID
+- RAZORPAY_KEY_SECRET
+
+If missing → throw startup error
+
+---
+
+# STEP 10: ERROR HANDLING
+
+Ensure:
+
+- consistent error format:
+  { success: false, message, code }
+
+- proper status codes:
+  400, 401, 403, 404, 500
+
+---
+
+# STEP 11: PERFORMANCE CHECK
+
+Ensure:
+
+- queries use indexes
+- no unnecessary DB calls
+- use product_stock view where needed
+
+---
+
+# STEP 12: FINAL SYSTEM TEST
+
+Simulate:
+
+1. Add product
+2. Add batch
+3. POS billing
+4. Kiosk checkout
+5. Payment verify
+6. Dashboard report
+
+Verify:
+
+- stock correct
+- no negative values
+- no crashes
+
+---
+
+# STEP 13: RUN VALIDATION AGENTS
+
+Run:
+
+- auto_dev_agent.txt
+- feature_validator.txt
+- system_test.txt
+
+Fix ALL issues found
+
+---
+
+# OUTPUT FORMAT:
+
+Return:
+
+1. Issues found
+2. Fixes applied
+3. Security improvements
+4. Final system status:
+   READY FOR DEMO / NEEDS FIX
+
+---
+
+# RULES:
+
+- Do NOT skip any step
+- Do NOT assume correctness
+- Fix everything before finishing
+- Do NOT break existing features

@@ -4,7 +4,7 @@ import { app } from './app.js';
 import { env } from './config/env.js';
 import { startExpiryCron } from './jobs/expiryCron.js';
 import { verifyAccessToken } from './lib/jwt.js';
-import { checkPostgresConnection } from './lib/postgres.js';
+import { checkPostgresConnection, pool } from './lib/postgres.js';
 import { connectRedis } from './lib/redis.js';
 
 const httpServer = createServer(app);
@@ -37,7 +37,23 @@ io.on('connection', (socket) => {
   console.log(`Socket connected: ${socket.id}`);
 
   if (socket.data.user?.businessId) {
-    socket.join(`business:${socket.data.user.businessId}`);
+    pool
+      .query(
+        `
+          SELECT id
+          FROM stores
+          WHERE business_id = $1
+        `,
+        [socket.data.user.businessId]
+      )
+      .then(({ rows }) => {
+        rows.forEach((store) => {
+          socket.join(`store:${store.id}`);
+        });
+      })
+      .catch((error) => {
+        console.error('Unable to attach socket store rooms:', error.message);
+      });
   }
 
   socket.on('disconnect', () => {

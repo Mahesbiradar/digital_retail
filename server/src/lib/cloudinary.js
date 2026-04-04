@@ -24,6 +24,10 @@ export const uploadQrCodeImage = async ({ storeSlug, dataUrl }) => {
   configureCloudinary();
 
   if (!env.CLOUDINARY_CLOUD_NAME || !env.CLOUDINARY_API_KEY || !env.CLOUDINARY_API_SECRET) {
+    if (env.NODE_ENV === 'production') {
+      throw new Error('Cloudinary credentials are required in production.');
+    }
+
     return {
       url: dataUrl,
       publicId: null,
@@ -45,7 +49,9 @@ export const uploadQrCodeImage = async ({ storeSlug, dataUrl }) => {
       provider: 'cloudinary'
     };
   } catch (error) {
-    console.warn('Cloudinary upload failed, falling back to data URL:', error.message);
+    if (env.NODE_ENV === 'production') {
+      throw error;
+    }
 
     return {
       url: dataUrl,

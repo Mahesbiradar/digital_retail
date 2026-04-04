@@ -2,11 +2,9 @@ import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore.js';
 
 export default function ProtectedRoute() {
-  const { accessToken, refreshToken, hasHydrated } = useAuthStore((state) => ({
-    accessToken: state.accessToken,
-    refreshToken: state.refreshToken,
-    hasHydrated: state.hasHydrated
-  }));
+  const accessToken = useAuthStore((state) => state.accessToken);
+  const refreshToken = useAuthStore((state) => state.refreshToken);
+  const hasHydrated = useAuthStore((state) => state.hasHydrated);
   const location = useLocation();
 
   if (!hasHydrated) {

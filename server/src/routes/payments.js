@@ -1,4 +1,5 @@
 import express from 'express';
+import { env } from '../config/env.js';
 import { pool } from '../lib/postgres.js';
 import { buildRazorpaySignature, getRazorpayClient, verifyRazorpaySignature } from '../lib/razorpay.js';
 import { auth } from '../middleware/auth.js';
@@ -102,6 +103,12 @@ router.post('/razorpay/verify', auth, async (req, res) => {
     }
 
     const isMockPayment = payment.status === 'pending' && payment.providerOrderId.startsWith('order_mock_');
+
+    if (isMockPayment && env.NODE_ENV === 'production') {
+      const error = new Error('Mock payments are not allowed in production.');
+      error.statusCode = 400;
+      throw error;
+    }
 
     if (!isMockPayment) {
       const signatureValid = verifyRazorpaySignature({

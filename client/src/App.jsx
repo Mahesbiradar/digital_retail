@@ -19,11 +19,9 @@ import KioskSuccess from './pages/kiosk/KioskSuccess.jsx';
 import { useAuthStore } from './store/authStore.js';
 
 function HomeRedirect() {
-  const { accessToken, refreshToken, hasHydrated } = useAuthStore((state) => ({
-    accessToken: state.accessToken,
-    refreshToken: state.refreshToken,
-    hasHydrated: state.hasHydrated
-  }));
+  const accessToken = useAuthStore((state) => state.accessToken);
+  const refreshToken = useAuthStore((state) => state.refreshToken);
+  const hasHydrated = useAuthStore((state) => state.hasHydrated);
 
   if (!hasHydrated) {
     return null;
@@ -33,11 +31,9 @@ function HomeRedirect() {
 }
 
 function GuestRoute({ children }) {
-  const { accessToken, refreshToken, hasHydrated } = useAuthStore((state) => ({
-    accessToken: state.accessToken,
-    refreshToken: state.refreshToken,
-    hasHydrated: state.hasHydrated
-  }));
+  const accessToken = useAuthStore((state) => state.accessToken);
+  const refreshToken = useAuthStore((state) => state.refreshToken);
+  const hasHydrated = useAuthStore((state) => state.hasHydrated);
 
   if (!hasHydrated) {
     return null;

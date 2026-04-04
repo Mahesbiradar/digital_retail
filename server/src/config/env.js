@@ -14,6 +14,29 @@ const parseNumber = (value, fallback) => {
   return Number.isFinite(parsed) ? parsed : fallback;
 };
 
+const requiredProductionEnvKeys = [
+  'DATABASE_URL',
+  'REDIS_URL',
+  'JWT_ACCESS_SECRET',
+  'JWT_REFRESH_SECRET',
+  'RAZORPAY_KEY_ID',
+  'RAZORPAY_KEY_SECRET'
+];
+
+const validateProductionEnv = () => {
+  if ((process.env.NODE_ENV ?? 'development') !== 'production') {
+    return;
+  }
+
+  const missingKeys = requiredProductionEnvKeys.filter((key) => !String(process.env[key] ?? '').trim());
+
+  if (missingKeys.length > 0) {
+    throw new Error(`Missing required production env vars: ${missingKeys.join(', ')}`);
+  }
+};
+
+validateProductionEnv();
+
 export const env = {
   NODE_ENV: process.env.NODE_ENV ?? 'development',
   PORT: parseNumber(process.env.PORT, 4000),

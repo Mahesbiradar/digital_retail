@@ -12,11 +12,15 @@ const storeAccessQuery = `
 export const storeAccess = (allowedRoles = ['owner', 'manager', 'cashier']) => async (req, res, next) => {
   try {
     if (!req.user) {
-      return res.status(401).json({ message: 'Authentication required.' });
+      return res.status(401).json({ success: false, message: 'Authentication required.', code: 401 });
     }
 
     if (!allowedRoles.includes(req.user.role)) {
-      return res.status(403).json({ message: 'You do not have permission to access this resource.' });
+      return res.status(403).json({
+        success: false,
+        message: 'You do not have permission to access this resource.',
+        code: 403
+      });
     }
 
     if (req.user.role === 'owner') {
@@ -26,7 +30,7 @@ export const storeAccess = (allowedRoles = ['owner', 'manager', 'cashier']) => a
     const storeId = req.params.storeId ?? req.body.storeId ?? req.query.storeId;
 
     if (!storeId) {
-      return res.status(400).json({ message: 'Store ID is required.' });
+      return res.status(400).json({ success: false, message: 'Store ID is required.', code: 400 });
     }
 
     const { rows } = await pool.query(storeAccessQuery, [
@@ -36,13 +40,19 @@ export const storeAccess = (allowedRoles = ['owner', 'manager', 'cashier']) => a
     ]);
 
     if (rows.length === 0) {
-      return res.status(403).json({ message: 'You do not have access to this store.' });
+      return res.status(403).json({
+        success: false,
+        message: 'You do not have access to this store.',
+        code: 403
+      });
     }
 
     return next();
   } catch (error) {
     return res.status(500).json({
-      message: error.message ?? 'Unable to verify store access.'
+      success: false,
+      message: error.message ?? 'Unable to verify store access.',
+      code: 500
     });
   }
 };
