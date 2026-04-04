@@ -81,8 +81,8 @@
 
 | # | Task | Status | Notes |
 |---|------|--------|-------|
-| 39 | Dashboard summary cards | TODO | |
-| 40 | Live kiosk feed (socket.io) | TODO | |
-| 41 | Sales report API + chart | TODO | |
-| 42 | Stock + expiry report | TODO | |
-| 43 | GST report (gst_enabled guard) | TODO | |
+| 39 | Dashboard summary cards | DONE | Owner dashboard now shows business summary cards for stores, products, sales, low stock, and kiosk volume |
+| 40 | Live kiosk feed (socket.io) | DONE | Dashboard listens to kiosk_transaction socket events and shows recent live checkout activity |
+| 41 | Sales report API + chart | DONE | Owner-only sales reporting endpoint returns a 14-day series and the dashboard renders a trend chart |
+| 42 | Stock + expiry report | DONE | Owner-only report lists low-stock products and batches needing expiry attention |
+| 43 | GST report (gst_enabled guard) | DONE | GST report is blocked until GST is enabled and then returns tax summaries and rate breakdowns |
