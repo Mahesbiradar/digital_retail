@@ -1,0 +1,175 @@
+You are a senior React + Zustand debugging expert.
+
+Your task is to FIX a critical frontend crash in Smart Kirana OS.
+
+---
+
+## PROBLEM:
+
+The app shows content for a fraction of a second and then goes blank.
+
+Console error:
+- "Maximum update depth exceeded"
+- "getSnapshot should be cached"
+- Crash occurs in GuestRoute and ProtectedRoute
+
+This indicates:
+- Infinite re-render loop
+- Zustand selector misuse
+- Navigation loop
+
+---
+
+## GOAL:
+
+Fix all infinite loops and stabilize routing and state.
+
+---
+
+# STEP 1: FIX GuestRoute
+
+Locate GuestRoute in App.jsx.
+
+Replace ALL logic with:
+
+- Do NOT use useEffect
+- Do NOT use navigate()
+
+Correct implementation:
+
+IF user exists → return <Navigate to="/" replace />
+ELSE → return children
+
+---
+
+# STEP 2: FIX ProtectedRoute
+
+Locate ProtectedRoute.
+
+Replace with:
+
+- If user is undefined → return null
+- If no user → redirect to /login
+- Else render children
+
+IMPORTANT:
+- Do NOT use useEffect
+- Do NOT trigger navigation inside effects
+
+---
+
+# STEP 3: FIX ZUSTAND SELECTORS (CRITICAL)
+
+Search entire project for:
+
+useAuthStore((state) => ({ ... }))
+
+This pattern creates new object every render → causes infinite loop.
+
+Replace ALL occurrences with:
+
+const user = useAuthStore((state) => state.user)
+const token = useAuthStore((state) => state.token)
+
+DO NOT return objects from selector.
+
+---
+
+# STEP 4: FIX AUTH STORE INITIAL STATE
+
+Ensure:
+
+user: null
+token: null
+
+NOT undefined.
+
+---
+
+# STEP 5: REMOVE EFFECT LOOPS
+
+Search for:
+
+useEffect(() => {
+  ...
+}, [user])
+
+If it triggers API calls or navigation → remove dependency.
+
+Fix to:
+
+useEffect(() => {
+  ...
+}, [])
+
+---
+
+# STEP 6: SAFE NULL HANDLING
+
+Replace unsafe access:
+
+user.name
+
+With:
+
+user?.name
+
+Across the project.
+
+---
+
+# STEP 7: CLEAR LOCAL STORAGE LOGIC
+
+Ensure app does NOT crash if:
+- token missing
+- user null
+
+---
+
+# STEP 8: VALIDATE ROUTER FLOW
+
+Ensure:
+
+- /login → GuestRoute
+- /signup → GuestRoute
+- /dashboard → ProtectedRoute
+
+---
+
+# STEP 9: TEST APP
+
+Run:
+
+- Load login page
+- Navigate to signup
+- Login → redirect to dashboard
+- Refresh page → no crash
+
+---
+
+# STEP 10: RUN INTERNAL VALIDATION
+
+- Check console → no infinite loop
+- No "Maximum update depth exceeded"
+- No blank screen
+
+---
+
+# OUTPUT:
+
+Return:
+
+1. Files modified
+2. Changes made
+3. Root cause explanation
+4. Final status:
+   FIXED / NEEDS MORE FIX
+
+---
+
+# RULES:
+
+- Do NOT skip Zustand fix (most important)
+- Do NOT leave any object selectors
+- Do NOT use useEffect for navigation
+- Keep code simple and stable

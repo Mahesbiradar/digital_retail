@@ -15,30 +15,16 @@ export default function KioskCart() {
   const [status, setStatus] = useState('loading');
   const [localError, setLocalError] = useState('');
 
-  const {
-    cart,
-    store,
-    business,
-    sessionId,
-    setSession,
-    setCart,
-    setPaymentOrder,
-    setReceipt,
-    setBusy,
-    computeTotals
-  } = useKioskStore((state) => ({
-    cart: state.cart,
-    store: state.store,
-    business: state.business,
-    sessionId: state.sessionId,
-    setSession: state.setSession,
-    setCart: state.setCart,
-    setPaymentOrder: state.setPaymentOrder,
-    setReceipt: state.setReceipt,
-    setBusy: state.setBusy,
-    computeTotals: state.computeTotals
-  }));
-
+  const cart = useKioskStore((state) => state.cart);
+  const store = useKioskStore((state) => state.store);
+  const business = useKioskStore((state) => state.business);
+  const sessionId = useKioskStore((state) => state.sessionId);
+  const setSession = useKioskStore((state) => state.setSession);
+  const setCart = useKioskStore((state) => state.setCart);
+  const setPaymentOrder = useKioskStore((state) => state.setPaymentOrder);
+  const setReceipt = useKioskStore((state) => state.setReceipt);
+  const setBusy = useKioskStore((state) => state.setBusy);
+  const computeTotals = useKioskStore((state) => state.computeTotals);
   const totals = useMemo(() => computeTotals(), [cart, business, computeTotals]);
 
   useEffect(() => {

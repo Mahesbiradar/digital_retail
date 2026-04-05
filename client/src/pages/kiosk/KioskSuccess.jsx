@@ -9,10 +9,8 @@ const currency = new Intl.NumberFormat('en-IN', {
 
 export default function KioskSuccess() {
   const { storeSlug } = useParams();
-  const { receipt, clearFlow } = useKioskStore((state) => ({
-    receipt: state.receipt,
-    clearFlow: state.clearFlow
-  }));
+  const receipt = useKioskStore((state) => state.receipt);
+  const clearFlow = useKioskStore((state) => state.clearFlow);
 
   const transaction = receipt?.transaction ?? null;
 

@@ -19,42 +19,22 @@ export default function KioskHome() {
   const [sessionStatus, setSessionStatus] = useState('loading');
   const [searchStatus, setSearchStatus] = useState('idle');
 
-  const {
-    sessionId,
-    store,
-    business,
-    products,
-    cart,
-    searchQuery,
-    scannerMessage,
-    errorMessage,
-    setSession,
-    setProducts,
-    setSearchQuery,
-    setScannerMessage,
-    setErrorMessage,
-    setBusy,
-    setCart,
-    computeTotals
-  } = useKioskStore((state) => ({
-    sessionId: state.sessionId,
-    store: state.store,
-    business: state.business,
-    products: state.products,
-    cart: state.cart,
-    searchQuery: state.searchQuery,
-    scannerMessage: state.scannerMessage,
-    errorMessage: state.errorMessage,
-    setSession: state.setSession,
-    setProducts: state.setProducts,
-    setSearchQuery: state.setSearchQuery,
-    setScannerMessage: state.setScannerMessage,
-    setErrorMessage: state.setErrorMessage,
-    setBusy: state.setBusy,
-    setCart: state.setCart,
-    computeTotals: state.computeTotals
-  }));
-
+  const sessionId = useKioskStore((state) => state.sessionId);
+  const store = useKioskStore((state) => state.store);
+  const business = useKioskStore((state) => state.business);
+  const products = useKioskStore((state) => state.products);
+  const cart = useKioskStore((state) => state.cart);
+  const searchQuery = useKioskStore((state) => state.searchQuery);
+  const scannerMessage = useKioskStore((state) => state.scannerMessage);
+  const errorMessage = useKioskStore((state) => state.errorMessage);
+  const setSession = useKioskStore((state) => state.setSession);
+  const setProducts = useKioskStore((state) => state.setProducts);
+  const setSearchQuery = useKioskStore((state) => state.setSearchQuery);
+  const setScannerMessage = useKioskStore((state) => state.setScannerMessage);
+  const setErrorMessage = useKioskStore((state) => state.setErrorMessage);
+  const setBusy = useKioskStore((state) => state.setBusy);
+  const setCart = useKioskStore((state) => state.setCart);
+  const computeTotals = useKioskStore((state) => state.computeTotals);
   const totals = useMemo(() => computeTotals(), [cart, business, computeTotals]);
 
   useEffect(() => {

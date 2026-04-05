@@ -19,28 +19,26 @@ import KioskSuccess from './pages/kiosk/KioskSuccess.jsx';
 import { useAuthStore } from './store/authStore.js';
 
 function HomeRedirect() {
-  const accessToken = useAuthStore((state) => state.accessToken);
-  const refreshToken = useAuthStore((state) => state.refreshToken);
+  const user = useAuthStore((state) => state.user);
   const hasHydrated = useAuthStore((state) => state.hasHydrated);
 
-  if (!hasHydrated) {
+  if (!hasHydrated || user === undefined) {
     return null;
   }
 
-  return <Navigate to={accessToken || refreshToken ? '/dashboard' : '/login'} replace />;
+  return <Navigate to={user ? '/dashboard' : '/login'} replace />;
 }
 
 function GuestRoute({ children }) {
-  const accessToken = useAuthStore((state) => state.accessToken);
-  const refreshToken = useAuthStore((state) => state.refreshToken);
+  const user = useAuthStore((state) => state.user);
   const hasHydrated = useAuthStore((state) => state.hasHydrated);
 
-  if (!hasHydrated) {
+  if (!hasHydrated || user === undefined) {
     return null;
   }
 
-  if (accessToken || refreshToken) {
-    return <Navigate to="/dashboard" replace />;
+  if (user) {
+    return <Navigate to="/" replace />;
   }
 
   return children;

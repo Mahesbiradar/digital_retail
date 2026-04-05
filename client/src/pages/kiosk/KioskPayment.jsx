@@ -17,12 +17,10 @@ export default function KioskPayment() {
   const [errorMessage, setErrorMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { paymentOrder, receipt, sessionId, setReceipt } = useKioskStore((state) => ({
-    paymentOrder: state.paymentOrder,
-    receipt: state.receipt,
-    sessionId: state.sessionId,
-    setReceipt: state.setReceipt
-  }));
+  const paymentOrder = useKioskStore((state) => state.paymentOrder);
+  const receipt = useKioskStore((state) => state.receipt);
+  const sessionId = useKioskStore((state) => state.sessionId);
+  const setReceipt = useKioskStore((state) => state.setReceipt);
 
   const transaction = receipt?.transaction ?? null;
   const amount = useMemo(() => Number(paymentOrder?.amount ?? transaction?.totalAmount ?? 0) / 100, [paymentOrder, transaction]);

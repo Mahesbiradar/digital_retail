@@ -44,64 +44,32 @@ export default function PosScreen() {
   const [catalogStatus, setCatalogStatus] = useState('loading');
   const [cameraOpen, setCameraOpen] = useState(false);
 
-  const {
-    store,
-    business,
-    products,
-    cart,
-    searchQuery,
-    discountAmount,
-    receipt,
-    paymentOrder,
-    scannerMessage,
-    isCheckingOut,
-    errorMessage,
-    setSession,
-    setProducts,
-    setSearchQuery,
-    setScannerMessage,
-    setScannerOpen,
-    setActiveBarcode,
-    addItem,
-    removeItem,
-    updateQty,
-    applyDiscount,
-    computeTotals,
-    setPaymentOrder,
-    setReceipt,
-    setCheckoutState,
-    setErrorMessage,
-    clearSale
-  } = usePosStore((state) => ({
-    store: state.store,
-    business: state.business,
-    products: state.products,
-    cart: state.cart,
-    searchQuery: state.searchQuery,
-    discountAmount: state.discountAmount,
-    receipt: state.receipt,
-    paymentOrder: state.paymentOrder,
-    scannerMessage: state.scannerMessage,
-    isCheckingOut: state.isCheckingOut,
-    errorMessage: state.errorMessage,
-    setSession: state.setSession,
-    setProducts: state.setProducts,
-    setSearchQuery: state.setSearchQuery,
-    setScannerMessage: state.setScannerMessage,
-    setScannerOpen: state.setScannerOpen,
-    setActiveBarcode: state.setActiveBarcode,
-    addItem: state.addItem,
-    removeItem: state.removeItem,
-    updateQty: state.updateQty,
-    applyDiscount: state.applyDiscount,
-    computeTotals: state.computeTotals,
-    setPaymentOrder: state.setPaymentOrder,
-    setReceipt: state.setReceipt,
-    setCheckoutState: state.setCheckoutState,
-    setErrorMessage: state.setErrorMessage,
-    clearSale: state.clearSale
-  }));
-
+  const store = usePosStore((state) => state.store);
+  const business = usePosStore((state) => state.business);
+  const products = usePosStore((state) => state.products);
+  const cart = usePosStore((state) => state.cart);
+  const searchQuery = usePosStore((state) => state.searchQuery);
+  const discountAmount = usePosStore((state) => state.discountAmount);
+  const receipt = usePosStore((state) => state.receipt);
+  const paymentOrder = usePosStore((state) => state.paymentOrder);
+  const scannerMessage = usePosStore((state) => state.scannerMessage);
+  const isCheckingOut = usePosStore((state) => state.isCheckingOut);
+  const errorMessage = usePosStore((state) => state.errorMessage);
+  const setSession = usePosStore((state) => state.setSession);
+  const setProducts = usePosStore((state) => state.setProducts);
+  const setSearchQuery = usePosStore((state) => state.setSearchQuery);
+  const setScannerMessage = usePosStore((state) => state.setScannerMessage);
+  const setActiveBarcode = usePosStore((state) => state.setActiveBarcode);
+  const addItem = usePosStore((state) => state.addItem);
+  const removeItem = usePosStore((state) => state.removeItem);
+  const updateQty = usePosStore((state) => state.updateQty);
+  const applyDiscount = usePosStore((state) => state.applyDiscount);
+  const computeTotals = usePosStore((state) => state.computeTotals);
+  const setPaymentOrder = usePosStore((state) => state.setPaymentOrder);
+  const setReceipt = usePosStore((state) => state.setReceipt);
+  const setCheckoutState = usePosStore((state) => state.setCheckoutState);
+  const setErrorMessage = usePosStore((state) => state.setErrorMessage);
+  const clearSale = usePosStore((state) => state.clearSale);
   const user = useAuthStore((state) => state.user);
 
   const totals = useMemo(() => computeTotals(), [cart, discountAmount, business, computeTotals]);
